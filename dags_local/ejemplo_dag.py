@@ -9,8 +9,8 @@ Para desplegar este DAG:
 """
 from datetime import datetime, timedelta
 from airflow import DAG
-from airflow.operators.python import PythonOperator
-from airflow.operators.bash import BashOperator
+from airflow.providers.standard.operators.python import PythonOperator
+from airflow.providers.standard.operators.bash import BashOperator
 
 # Argumentos por defecto para el DAG
 default_args = {
@@ -45,10 +45,10 @@ def finalizar():
 
 # Definición del DAG
 with DAG(
-    'ejemplo_dag',  # CAMBIAR NOMBRE AQUÍ
+    'ejemplo_dag',
     default_args=default_args,
     description='DAG de ejemplo con tareas básicas',
-    schedule_interval='0 8 * * *',  # Ejecutar diariamente a las 8:00 AM
+    schedule='0 8 * * *',  # Ejecutar diariamente a las 8:00 AM (Airflow 3.x usa 'schedule' en lugar de 'schedule_interval')
     start_date=datetime(2025, 1, 1),
     catchup=False,
     tags=['ejemplo', 'tutorial'],

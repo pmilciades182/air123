@@ -74,7 +74,9 @@ ifdef FILE
 		echo "Error: Airflow no está corriendo. Ejecuta 'make start' primero"; \
 		exit 1; \
 	fi; \
-	docker cp dags_local/$(FILE) $$SCHEDULER:/opt/airflow/dags/$(FILE)
+	docker cp dags_local/$(FILE) $$SCHEDULER:/opt/airflow/dags/$(FILE); \
+	docker-compose exec -T --user root airflow-scheduler chmod 644 /opt/airflow/dags/$(FILE); \
+	docker-compose exec -T --user root airflow-scheduler chown airflow:root /opt/airflow/dags/$(FILE)
 	@echo "Archivo desplegado correctamente"
 	@echo "El DAG aparecerá en Airflow en ~30 segundos"
 else
@@ -94,6 +96,8 @@ else
 		for file in dags_local/*.py; do \
 			filename=$$(basename $$file); \
 			docker cp $$file $$SCHEDULER:/opt/airflow/dags/$$filename; \
+			docker-compose exec -T --user root airflow-scheduler chmod 644 /opt/airflow/dags/$$filename; \
+			docker-compose exec -T --user root airflow-scheduler chown airflow:root /opt/airflow/dags/$$filename; \
 			echo "Desplegado: $$filename"; \
 		done; \
 		echo ""; \
