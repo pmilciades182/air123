@@ -8,9 +8,8 @@ CREDENCIALES.md
 logs/
 *.log
 
-# DAGs generados por Docker (se recrearán)
-dags/__pycache__/
-dags/ejemplo_dag.py
+# Carpeta dags/ (se genera con make deploy desde dags_local/)
+dags/
 
 # Archivos de Python
 __pycache__/

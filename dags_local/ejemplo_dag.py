@@ -1,10 +1,11 @@
 """
-Template de DAG para Airflow
-Copia este archivo a la carpeta dags/ para crear un nuevo DAG
+DAG de ejemplo para demostrar Airflow
+Este DAG ejecuta tareas simples cada día a las 8:00 AM
 
-Uso:
-  cp dag_template.py dags/mi_nuevo_dag.py
-  # Edita el archivo y cambia el nombre del DAG
+Para desplegar este DAG:
+  make deploy
+  # O para desplegar un archivo específico:
+  make deploy FILE=ejemplo_dag.py
 """
 from datetime import datetime, timedelta
 from airflow import DAG

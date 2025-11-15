@@ -44,8 +44,9 @@ airflow_develop/
 ├── docker/
 │   ├── Dockerfile              # Imagen personalizada de Airflow
 │   └── requirements.txt        # Dependencias Python adicionales
-├── dags/
+├── dags_local/                 # DAGs editables localmente (versionado en Git)
 │   └── ejemplo_dag.py          # DAG de ejemplo
+├── dags/                       # DAGs desplegados (generado, NO versionado)
 ├── logs/                       # Logs de Airflow (generado automáticamente)
 ├── plugins/                    # Plugins personalizados de Airflow
 ├── docker-compose.yml          # Configuración de servicios Docker
@@ -74,6 +75,16 @@ make stop
 
 # Reiniciar Airflow
 make restart
+```
+
+### Comandos de Despliegue de DAGs
+
+```bash
+# Desplegar todos los DAGs de dags_local/ a dags/
+make deploy
+
+# Desplegar solo un archivo específico
+make deploy FILE=mi_dag.py
 ```
 
 ### Comandos Adicionales
@@ -107,7 +118,15 @@ make build
 make start
 ```
 
-### 2. Acceder a Airflow UI
+### 2. Desplegar el DAG de ejemplo
+
+```bash
+make deploy
+```
+
+Esto copiará todos los DAGs de `dags_local/` a `dags/` donde Airflow los detectará automáticamente.
+
+### 3. Acceder a Airflow UI
 
 Abre tu navegador en: http://localhost:4000
 
@@ -115,18 +134,34 @@ Abre tu navegador en: http://localhost:4000
 - Usuario: `airflow`
 - Contraseña: `airflow`
 
-### 3. Verificar el DAG de ejemplo
+### 4. Verificar el DAG de ejemplo
 
 En la interfaz de Airflow verás el DAG `ejemplo_dag` que:
 - Se ejecuta diariamente a las 8:00 AM
 - Contiene 4 tareas de ejemplo
 - Muestra un flujo básico de trabajo
 
-## Crear Nuevos DAGs
+## Flujo de Trabajo para Crear y Editar DAGs
 
-1. Crea un archivo Python en la carpeta `dags/`
-2. Define tu DAG siguiendo la estructura del ejemplo
-3. El DAG aparecerá automáticamente en la UI de Airflow
+### 📝 Los DAGs se editan en `dags_local/` y se despliegan a `dags/`
+
+**¿Por qué este flujo?**
+- `dags_local/`: Archivos con permisos de tu usuario, editables en VSCode
+- `dags/`: Carpeta montada en Docker (permisos de contenedor)
+
+### Crear un Nuevo DAG
+
+1. **Crear el archivo en `dags_local/`** (editable en VSCode):
+
+```bash
+# Opción 1: Copiar el ejemplo
+cp dags_local/ejemplo_dag.py dags_local/mi_nuevo_dag.py
+
+# Opción 2: Crear desde cero
+nano dags_local/mi_nuevo_dag.py  # o usar VSCode
+```
+
+2. **Editar el DAG** en VSCode con tus permisos locales
 
 Ejemplo mínimo:
 
@@ -150,6 +185,29 @@ with DAG(
         python_callable=mi_funcion,
     )
 ```
+
+3. **Desplegar a Airflow**:
+
+```bash
+# Desplegar todos los DAGs
+make deploy
+
+# O solo el archivo específico
+make deploy FILE=mi_nuevo_dag.py
+```
+
+4. **Verificar en Airflow UI** (http://localhost:4000)
+   - El DAG aparecerá en ~30 segundos
+
+### Editar un DAG Existente
+
+1. Editar el archivo en `dags_local/` con VSCode
+2. Guardar cambios
+3. Redesplegar:
+   ```bash
+   make deploy FILE=mi_dag.py
+   ```
+4. Airflow detectará los cambios automáticamente
 
 ## Servicios Docker
 
@@ -188,11 +246,12 @@ make restart
 
 ## Notas Importantes
 
-- Los logs se almacenan en la carpeta `logs/`
-- Los DAGs se cargan desde la carpeta `dags/`
-- Los plugins personalizados van en `plugins/`
-- El archivo `.env` contiene credenciales sensibles y NO debe versionarse en Git
-- La metadata de Airflow se almacena en PostgreSQL 14 (servidor empresa)
+- **DAGs**: Edita en `dags_local/` (versionado en Git), despliega con `make deploy`
+- **Logs**: Se almacenan en la carpeta `logs/` (no versionado)
+- **Plugins**: Los plugins personalizados van en `plugins/`
+- **Credenciales**: El archivo `.env` NO debe versionarse en Git
+- **Metadata**: Se almacena en PostgreSQL 14 (servidor empresa)
+- **Carpeta dags/**: NO versionada, se genera automáticamente con `make deploy`
 
 ## Solución de Problemas
 
