@@ -54,6 +54,14 @@ services:
       start_period: 30s
     restart: always
 
+  airflow-dag-processor:
+    <<: *airflow-common
+    command: dag-processor
+    depends_on:
+      airflow-init:
+        condition: service_completed_successfully
+    restart: always
+
   airflow-init:
     <<: *airflow-common
     entrypoint: /bin/bash
