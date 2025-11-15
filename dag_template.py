@@ -1,0 +1,81 @@
+"""
+Template de DAG para Airflow
+Copia este archivo a la carpeta dags/ para crear un nuevo DAG
+
+Uso:
+  cp dag_template.py dags/mi_nuevo_dag.py
+  # Edita el archivo y cambia el nombre del DAG
+"""
+from datetime import datetime, timedelta
+from airflow import DAG
+from airflow.operators.python import PythonOperator
+from airflow.operators.bash import BashOperator
+
+# Argumentos por defecto para el DAG
+default_args = {
+    'owner': 'airflow',
+    'depends_on_past': False,
+    'email_on_failure': False,
+    'email_on_retry': False,
+    'retries': 1,
+    'retry_delay': timedelta(minutes=5),
+}
+
+# Funciones Python de ejemplo
+def tarea_inicio():
+    """Tarea de inicio del flujo"""
+    print("Iniciando el flujo de trabajo...")
+    print(f"Fecha de ejecución: {datetime.now()}")
+    return "Flujo iniciado correctamente"
+
+def procesar_datos():
+    """Simula procesamiento de datos"""
+    print("Procesando datos...")
+    datos = [1, 2, 3, 4, 5]
+    resultado = sum(datos)
+    print(f"Resultado del procesamiento: {resultado}")
+    return resultado
+
+def finalizar():
+    """Tarea final del flujo"""
+    print("Finalizando el flujo de trabajo...")
+    print("Todas las tareas completadas exitosamente")
+    return "Flujo finalizado"
+
+# Definición del DAG
+with DAG(
+    'ejemplo_dag',  # CAMBIAR NOMBRE AQUÍ
+    default_args=default_args,
+    description='DAG de ejemplo con tareas básicas',
+    schedule_interval='0 8 * * *',  # Ejecutar diariamente a las 8:00 AM
+    start_date=datetime(2025, 1, 1),
+    catchup=False,
+    tags=['ejemplo', 'tutorial'],
+) as dag:
+
+    # Tarea 1: Inicio
+    inicio = PythonOperator(
+        task_id='inicio',
+        python_callable=tarea_inicio,
+    )
+
+    # Tarea 2: Comando Bash
+    verificar_sistema = BashOperator(
+        task_id='verificar_sistema',
+        bash_command='echo "Sistema: $(uname -a)" && echo "Fecha: $(date)"',
+    )
+
+    # Tarea 3: Procesamiento
+    procesamiento = PythonOperator(
+        task_id='procesar_datos',
+        python_callable=procesar_datos,
+    )
+
+    # Tarea 4: Finalización
+    fin = PythonOperator(
+        task_id='finalizar',
+        python_callable=finalizar,
+    )
+
+    # Definir el flujo de tareas (dependencias)
+    inicio >> verificar_sistema >> procesamiento >> fin
