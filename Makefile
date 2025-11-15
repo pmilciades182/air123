@@ -8,12 +8,13 @@ help:
 	@echo "  make restart       - Reiniciar Airflow"
 	@echo "  make deploy        - Desplegar todos los DAGs de dags_local/ a dags/"
 	@echo "  make deploy FILE=x - Desplegar solo el archivo especificado"
+	@echo "  make get-password  - Obtener contraseña de Airflow (Airflow 3.x)"
 	@echo "  make logs          - Ver logs de todos los servicios"
 	@echo "  make status        - Ver estado de los contenedores"
 	@echo "  make clean         - Detener y eliminar contenedores, volúmenes"
 	@echo ""
 	@echo "Airflow UI: http://localhost:4000"
-	@echo "Usuario: airflow / Contraseña: airflow"
+	@echo "Usuario: airflow / Contraseña: usar 'make get-password'"
 
 build:
 	@echo "Construyendo imágenes de Docker..."
@@ -42,6 +43,10 @@ logs-webserver:
 
 logs-scheduler:
 	docker-compose logs -f airflow-scheduler
+
+get-password:
+	@echo "Obteniendo contraseña de Airflow..."
+	@docker-compose logs airflow-webserver 2>&1 | grep "Password for user" | tail -1 || echo "Airflow aún no ha generado la contraseña. Espera unos segundos y vuelve a intentar."
 
 status:
 	docker-compose ps

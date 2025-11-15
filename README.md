@@ -130,9 +130,11 @@ Esto copiará todos los DAGs de `dags_local/` a `dags/` donde Airflow los detect
 
 Abre tu navegador en: http://localhost:4000
 
-**Credenciales de acceso:**
+**Credenciales de acceso (Airflow 3.x):**
 - Usuario: `airflow`
-- Contraseña: `airflow`
+- Contraseña: Ver logs del webserver con `make logs-webserver`
+  - La contraseña se genera automáticamente al iniciar
+  - Busca la línea: "Simple auth manager | Password for user 'airflow': XXXXXXXX"
 
 ### 4. Verificar el DAG de ejemplo
 
@@ -281,8 +283,8 @@ Verifica que:
 
 ## Versiones
 
-- Apache Airflow: 2.10.4
-- Python: 3.11
+- Apache Airflow: 3.1.3 (última versión estable)
+- Python: 3.13
 - PostgreSQL: 14
 - Executor: LocalExecutor
 
