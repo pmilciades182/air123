@@ -1,3 +1,7 @@
 # Dependencias adicionales para Airflow 3.x
 psycopg2-binary==2.9.10
 apache-airflow-providers-postgres>=6.0.0
+
+# Dependencias para ODBC (IBM i DB2)
+pyodbc>=5.0.0
+apache-airflow-providers-odbc>=4.0.0
