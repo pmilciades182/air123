@@ -413,15 +413,26 @@ Este proyecto incluye conexiones preconfiguradas y DAGs de ejemplo listos para u
 - `dag_postgres_test.py` - Consulta a tabla FRACCION en PostgreSQL
 - `dag_ibmi_test.py` - Consulta a tabla ubitfra en IBM i DB2
 
-**📖 Ver documentación completa:** [CONEXIONES_Y_DAGS.md](CONEXIONES_Y_DAGS.md)
+**📖 Ver documentación completa:** [docs/](docs/)
 
-## Documentación Adicional
+## Documentación
+
+**📚 [DOCUMENTATION.md](DOCUMENTATION.md)** - Índice visual completo de toda la documentación
+
+### Guías Principales
+
+- **[📖 docs/README.md](docs/README.md)** - Índice detallado de documentación técnica
+- **[🚀 Installation Guide](docs/installation-guide.md)** - Configuración inicial y setup
+- **[🔌 Connections Configuration](docs/connections-configuration.md)** - Configuración de conexiones
+- **[📝 DAG Development Guide](docs/dag-development-guide.md)** - Desarrollo de DAGs
+- **[🔧 IBM i ODBC Driver Setup](docs/ibmi-odbc-driver-setup.md)** - Setup del driver ODBC
+
+### Recursos Externos
 
 - [Documentación oficial de Airflow 3.x](https://airflow.apache.org/docs/apache-airflow/3.1.3/)
 - [Guía de DAGs](https://airflow.apache.org/docs/apache-airflow/stable/concepts/dags.html)
 - [Operadores disponibles](https://airflow.apache.org/docs/apache-airflow/stable/operators-and-hooks-ref.html)
 - [Airflow 3.0 Migration Guide](https://airflow.apache.org/docs/apache-airflow/3.1.3/migrations-ref.html)
-- **[Conexiones y DAGs de Ejemplo](CONEXIONES_Y_DAGS.md)** - Documentación de conexiones y DAGs del proyecto
 
 ## Arquitectura de Airflow 3.x
 
