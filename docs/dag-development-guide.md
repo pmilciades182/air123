@@ -2,6 +2,23 @@
 
 Esta carpeta contiene los archivos de DAGs que se editan localmente y luego se despliegan a Airflow.
 
+## 🔧 Configuración Rápida para VS Code
+
+Si VS Code no reconoce las importaciones de Airflow (`Import "airflow..." could not be resolved`), ejecuta:
+
+```bash
+make setup-local
+```
+
+Este comando:
+- ✅ Crea un entorno virtual Python local (`.venv`)
+- ✅ Instala todas las dependencias de Airflow
+- ✅ Configura VS Code automáticamente
+
+Luego recarga VS Code y selecciona el intérprete `.venv/bin/python`.
+
+**Nota:** El entorno `.venv` es SOLO para IntelliSense de VS Code. Airflow sigue ejecutándose en Docker.
+
 ## 📂 Estructura
 
 ```

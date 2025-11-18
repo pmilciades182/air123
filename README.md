@@ -230,6 +230,9 @@ Todos los comandos se ejecutan dentro del directorio de la instancia correspondi
 # Ver ayuda (muestra la instancia actual)
 make help
 
+# Configurar entorno local para VS Code (solo primera vez)
+make setup-local
+
 # Construir las imágenes de Docker
 make build
 
@@ -421,6 +424,7 @@ Este proyecto incluye conexiones preconfiguradas y DAGs de ejemplo listos para u
 
 ### Guías Principales
 
+- **[💻 DESARROLLO_LOCAL.md](DESARROLLO_LOCAL.md)** - **Configuración de VS Code para desarrollo local**
 - **[📖 docs/README.md](docs/README.md)** - Índice detallado de documentación técnica
 - **[🚀 Installation Guide](docs/installation-guide.md)** - Configuración inicial y setup
 - **[🔌 Connections Configuration](docs/connections-configuration.md)** - Configuración de conexiones

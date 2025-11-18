@@ -1,4 +1,4 @@
-.PHONY: help build start stop restart logs clean status deploy
+.PHONY: help build start stop restart logs clean status deploy setup-local
 
 # Cargar PROJECT_NAME del archivo .env
 include .env
@@ -9,6 +9,11 @@ DOCKER_COMPOSE = docker-compose --project-name $(PROJECT_NAME)
 
 help:
 	@echo "Comandos disponibles para Airflow (Instancia: $(PROJECT_NAME)):"
+	@echo ""
+	@echo "Desarrollo:"
+	@echo "  make setup-local   - Configurar entorno local para VS Code (IntelliSense)"
+	@echo ""
+	@echo "Docker/Airflow:"
 	@echo "  make build         - Construir las imágenes de Docker"
 	@echo "  make start         - Iniciar Airflow (webserver + scheduler)"
 	@echo "  make stop          - Detener todos los contenedores"
@@ -114,3 +119,72 @@ else
 		echo "Los DAGs aparecerán en Airflow en ~30 segundos"; \
 	fi
 endif
+
+setup-local:
+	@echo "========================================="
+	@echo "Configurando entorno local para VS Code"
+	@echo "========================================="
+	@echo ""
+	@echo "Este comando configurará:"
+	@echo "  - Entorno virtual Python (.venv)"
+	@echo "  - Dependencias de Airflow para IntelliSense"
+	@echo "  - Configuración de VS Code"
+	@echo ""
+	@# Verificar que python3 esté instalado
+	@if ! command -v python3 >/dev/null 2>&1; then \
+		echo "❌ Error: python3 no está instalado"; \
+		echo "Instala Python 3.13 o superior primero"; \
+		exit 1; \
+	fi
+	@# Mostrar versión de Python
+	@echo "Versión de Python detectada: $$(python3 --version)"
+	@echo ""
+	@# Crear entorno virtual si no existe
+	@if [ ! -d .venv ]; then \
+		echo "📦 Creando entorno virtual..."; \
+		python3 -m venv .venv; \
+		echo "✅ Entorno virtual creado"; \
+	else \
+		echo "✅ Entorno virtual ya existe"; \
+	fi
+	@echo ""
+	@# Actualizar pip
+	@echo "⬆️  Actualizando pip..."
+	@.venv/bin/pip install --quiet --upgrade pip
+	@echo "✅ pip actualizado"
+	@echo ""
+	@# Instalar dependencias
+	@echo "📥 Instalando dependencias de Airflow (esto puede tardar unos minutos)..."
+	@.venv/bin/pip install --quiet apache-airflow==3.1.3
+	@.venv/bin/pip install --quiet apache-airflow-providers-standard
+	@.venv/bin/pip install --quiet -r docker/requirements.txt
+	@echo "✅ Dependencias instaladas"
+	@echo ""
+	@# Crear carpeta .vscode si no existe
+	@mkdir -p .vscode
+	@# Verificar configuración de VS Code
+	@if [ -f .vscode/settings.json ]; then \
+		echo "✅ Configuración de VS Code ya existe"; \
+	else \
+		echo "⚠️  Advertencia: .vscode/settings.json no encontrado"; \
+		echo "   Debería haber sido creado automáticamente"; \
+	fi
+	@echo ""
+	@echo "========================================="
+	@echo "✅ Configuración completada exitosamente"
+	@echo "========================================="
+	@echo ""
+	@echo "Próximos pasos:"
+	@echo ""
+	@echo "1. Recarga VS Code (o cierra y abre el proyecto nuevamente)"
+	@echo ""
+	@echo "2. Selecciona el intérprete de Python:"
+	@echo "   - Presiona Ctrl+Shift+P"
+	@echo "   - Escribe 'Python: Select Interpreter'"
+	@echo "   - Selecciona el que dice '.venv' o './venv/bin/python'"
+	@echo ""
+	@echo "3. Verifica que los imports ya no muestren errores en dags_local/"
+	@echo ""
+	@echo "Nota: El entorno .venv es SOLO para VS Code IntelliSense."
+	@echo "      Airflow sigue ejecutándose en Docker con sus propias dependencias."
+	@echo ""
