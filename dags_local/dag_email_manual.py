@@ -15,8 +15,9 @@ Para ejecutar este DAG:
 from datetime import datetime
 import socket
 import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 from airflow import DAG
-from airflow.providers.smtp.operators.smtp import EmailOperator
 from airflow.providers.standard.operators.python import PythonOperator
 from airflow.exceptions import AirflowException
 
@@ -98,6 +99,56 @@ def log_ejecucion_manual():
     print("Preparando para enviar correo electrónico...")
     print("=" * 60)
 
+def enviar_email_sin_ssl():
+    """Envía un email usando SMTP sin SSL/TLS"""
+    print("=" * 60)
+    print("ENVIANDO EMAIL")
+    print("=" * 60)
+
+    destinatario = 'pablo.gonzalez@idesa.com.py'
+    remitente = 'airflow@idesa.com.py'
+    asunto = 'Test desde Airflow - Ejecución Manual'
+
+    # Crear el mensaje
+    mensaje = MIMEMultipart('alternative')
+    mensaje['Subject'] = asunto
+    mensaje['From'] = remitente
+    mensaje['To'] = destinatario
+
+    # Contenido HTML del email
+    html_content = f"""
+    <html>
+      <head></head>
+      <body>
+        <h2>Test de Email desde Airflow</h2>
+        <p>Este es un email de prueba enviado desde Airflow.</p>
+        <p><strong>Fecha y hora de ejecución:</strong> {datetime.now()}</p>
+        <p><strong>Servidor SMTP:</strong> {SMTP_HOST}:{SMTP_PORT}</p>
+        <p><strong>Estado:</strong> Email enviado exitosamente sin SSL/TLS</p>
+      </body>
+    </html>
+    """
+
+    parte_html = MIMEText(html_content, 'html')
+    mensaje.attach(parte_html)
+
+    try:
+        print(f"Conectando a servidor SMTP {SMTP_HOST}:{SMTP_PORT} sin SSL...")
+        # Conectar sin SSL
+        smtp = smtplib.SMTP(SMTP_HOST, SMTP_PORT, timeout=10)
+
+        print(f"Enviando email desde {remitente} a {destinatario}...")
+        smtp.sendmail(remitente, destinatario, mensaje.as_string())
+
+        print(f"✓ Email enviado exitosamente a {destinatario}")
+        smtp.quit()
+        print("=" * 60)
+
+    except Exception as e:
+        error_msg = f"✗ Error al enviar email: {str(e)}"
+        print(error_msg)
+        raise AirflowException(error_msg)
+
 # Definición del DAG
 with DAG(
     'dag_email_manual',
@@ -121,13 +172,10 @@ with DAG(
         python_callable=verificar_conectividad_smtp,
     )
 
-    # Tarea 3: Enviar correo electrónico
-    enviar_email = EmailOperator(
+    # Tarea 3: Enviar correo electrónico (usando función personalizada sin SSL)
+    enviar_email = PythonOperator(
         task_id='enviar_email',
-        to='pablo.gonzalez@idesa.com.py',
-        subject='test',
-        html_content='test',
-        conn_id='smtp_idesa',  # Conexión SMTP configurada en variables de entorno
+        python_callable=enviar_email_sin_ssl,
     )
 
     # Definir el flujo de tareas
